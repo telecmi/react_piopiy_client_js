@@ -14,7 +14,7 @@ Use command __git clone__ to clone the React piopiy example from our <a href="ht
 git clone https://github.com/telecmi/react_piopiy_voice_js.git
 ```
 
-#### Change Agent/User ID and password <a href="https://github.com/telecmi/react_piopiy_voice_js/blob/main/src/service/piopiy_voice.js#L28" target="_blank">here</a>.
+#### Change Agent/User ID and password <a href="https://github.com/telecmi/react_piopiy_client_js/blob/main/src/service/piopiy_voice.js#L28" target="_blank">here</a>.
 
 ```javascript
  npm install
