@@ -1,317 +1,141 @@
 
-
-
-
-let audioPlay = new Audio( 'tone/ringtone.mp3' );
-audioPlay.loop = true;
-audioPlay.load();
-
-
-
-let focus = true;
-
-
-
-
-
-let global_this = {};
-
-
-
-
-export const piopiy_start = async ( _this ) => {
-
-
-
-    //Agent/User ID and password
-
-    _this.piopiy.login( "xxxxx", "xxxx", "sbcind.telecmi.com" );
-
-
-    _this.piopiy.on( 'login', function ( object ) {
-
-        _this.isSIP = true;
-
-    } );
-
-    _this.piopiy.on( 'logout', function ( object ) {
-
-
-        _this.isSIP = false;
-
-    } )
-
-    _this.piopiy.on( 'api-cmi-transfer', ( data ) => {
-
-        _this.piopiy.sendDtmf( "*9" );
-    } )
-
-    _this.piopiy.on( 'loginFailed', function ( object ) {
-
-
-        if ( object.code === 401 ) {
-
-        }
-        _this.isSIP = false;
-
-    } )
-
-
-    _this.piopiy.on( 'connected', function ( object ) {
-
-
-    } )
-
-    _this.piopiy.on( 'disconnected', function ( object ) {
-
-
-    } )
-
-
-    _this.piopiy.on( 'error', function ( object ) {
-
-    } )
-
-
-    _this.piopiy.on( 'ended', function ( object ) {
-
-        if ( !focus ) {
-
-        }
-        audioPlay.pause();
-        _this.setState( { dialState: 'Hangup' } )
-        _this.setState( { dial: false } );
-        _this.setState( { hold: true } );
-        _this.setState( { incoming: false } );
-        _this.setState( { dialnumber: '' } );
-        _this.setState( { call: true } );
-
-    } )
-
-
-
-
-    _this.piopiy.on( 'rejected', function ( object ) {
-
-        audioPlay.pause();
-        _this.setState( { incoming: false } );
-        _this.setState( { dialnumber: '' } );
-    } )
-
-    _this.piopiy.on( 'answered', function ( object ) {
-
-
-        audioPlay.pause();
-        _this.setState( { dialState: 'answered' } );
-        _this.setState( { hold: true } );
-    } )
-
-    _this.piopiy.on( 'hangup', function ( object ) {
-
-
-        if ( !focus ) {
-
-
-        }
-        audioPlay.pause();
-        _this.setState( { dialState: 'Hangup' } )
-        _this.setState( { dialnumber: '' } );
-        _this.setState( { dial: false } );
-        _this.setState( { incoming: false } );
-        _this.setState( { hold: true } );
-        _this.setState( { call: true } );
-
-    } )
-
-    _this.piopiy.on( 'mediaFailed', function ( object ) {
-
-        audioPlay.pause();
-        _this.setState( { dialState: 'Hangup' } );
-        _this.setState( { dial: false } );
-        _this.setState( { incoming: false } );
-        alert( 'Please check your Audio Device' )
-
-
-        //Disable hangup button from Web state
-        _this.setState( { call: true } );
-    } )
-
-    _this.piopiy.on( 'inComingCall', function ( e ) {
-
-
-        audioPlay.currentTime = 0;
-
-
-        if ( !focus ) {
-
-        }
-
-
-
-
-        if ( localStorage.muteRingtone != 'true' ) {
-            var playPromise = audioPlay.play();
-
-            if ( playPromise !== undefined ) {
-                playPromise.then( _ => {
-
-                } ).catch( error => {
-
-                } );
-            }
-        }
-
-
-
-
-    } )
-
-    _this.piopiy.on( 'ringing', ( e ) => {
-        _this.setState( { dialState: 'Ringing' } )
-    } )
-
-    _this.piopiy.on( 'dtmf', ( e ) => {
-
-
-
-    } );
-
-    _this.piopiy.on( 'hold', ( e ) => {
-
-
-
-    } );
-
-    _this.piopiy.on( 'unhold', ( e ) => {
-
-
-    } );
-
-    _this.piopiy.on( 'transfer', ( e ) => {
-    } )
-
-    _this.piopiy.on( 'record', ( e ) => {
+export const piopiy_start = async (_this) => {
+
+    //Please update Agent/User ID and password
+
+    _this.piopiy.login("xxxxxxx", "xxxxxx", "sbcind.telecmi.com");
+
+    _this.piopiy.on('login', (e) => {
+        console.log(e)
+    });
+
+    _this.piopiy.on('trying', (e) => {
+        console.log(e)
+    })
+
+    _this.piopiy.on('ringing', (e) => {
+        console.log(e)
+    })
+
+    _this.piopiy.on('answered', (e) => {
+        _this.setState({ answer: false });
+        _this.setState({ hangup: true });
+        console.log(e)
+    })
+
+    _this.piopiy.on('callStream', (e) => {
+        console.log(e)
+    })
+
+    _this.piopiy.on('inComingCall', (e) => {
+        _this.setState({ answer: true });
+        console.log(e)
+    })
+
+    _this.piopiy.on('hangup', (e) => {
+        _this.setState({ hangup: false });
+        console.log(e)
+    })
+
+    _this.piopiy.on('ended', (e) => {
+        _this.setState({ hangup: false });
+        console.log(e)
+    })
+
+    _this.piopiy.on('hold', (e) => {
+        console.log(e)
+    });
+
+    _this.piopiy.on('unhold', (e) => {
+        console.log(e)
+    });
+
+    _this.piopiy.on('error', (e) => {
+        console.log(e)
+    })
+
+    _this.piopiy.on('logout', (e) => {
+        console.log(e)
+    })
+
+    _this.piopiy.on('rejected', (e) => {
+        _this.setState({ hangup: false });
+        console.log(e)
+    })
+
+    _this.piopiy.on('mediaFailed', (e) => {
+        console.log(e)
+    })
+
+    _this.piopiy.on('dtmf', (e) => {
+        console.log(e)
+    });
+
+    _this.piopiy.on('transfer', (e) => {
+        console.log(e)
+    })
+
+    _this.piopiy.on('record', (e) => {
         e['record'] = true
-    } )
+    })
 
-    _this.piopiy.on( 'missed', ( e ) => {
+    _this.piopiy.on('missed', (e) => {
+        console.log(e)
+    })
 
-        audioPlay.pause();
-        _this.setState( { incoming: false } );
-    } )
-    _this.piopiy.on( 'trying', ( e ) => {
-        _this.setState( { dialState: 'Trying' } )
+    _this.piopiy.on('api-cmi-transfer', (e) => {
+        _this.piopiy.sendDtmf("*9");
+    })
 
-
-        //Disable call button from Web state
-        _this.setState( { call: false } );
-    } )
-
-    _this.piopiy.on( 'callStream', ( e ) => {
-
-    } )
-
-    global_this = _this;
+    _this.piopiy.on('loginFailed', (e) => {
+        console.log(e)
+    })
 
 }
 
 
 
-export const make_call = ( _this, number ) => {
-
-    //Disable call button from Web state
-    _this.setState( { call: false } );
-
-    _this.piopiy.call( number );
-
+export const transfer = (_this, e) => {
+    _this.piopiy.transfer(e)
 }
 
-export const terminate = ( _this ) => {
-    audioPlay.pause();
-    _this.setState( { dial: false } );
+export const record = (_this, e) => {
+    _this.piopiy.sendDtmf("*5");
+}
 
-    //Disable hangup button from Web state
-    _this.setState( { call: true } );
+export const merge = (_this) => {
+    _this.piopiy.sendDtmf("0");
+}
+
+export const cancel_transfer = (_this) => {
+    _this.piopiy.sendDtmf("#");
+}
+
+export const answer = (_this) => {
+    _this.piopiy.answer();
+}
+
+export const terminate = (_this) => {
     _this.piopiy.terminate();
 }
 
-export const dtmf = ( _this, dtmf ) => {
-
-    _this.piopiy.sendDtmf( dtmf );
-}
-
-export const reRegister = ( _this, dtmf ) => {
-
-    _this.piopiy.reRegister();
-}
-
-
-export const transfer = ( _this, no ) => {
-
-    _this.piopiy.transfer( _this.piopiy.getCallId(), no )
-
-
-}
-
-
-export const record = ( _this, no ) => {
-
-
-    _this.piopiy.sendDtmf( "*5" );
-
-}
-
-export const merge = ( _this ) => {
-
-    _this.piopiy.sendDtmf( "0" );
-}
-
-export const cancel_transfer = ( _this ) => {
-
-    _this.piopiy.sendDtmf( "#" );
-}
-
-
-
-
-export const answer = ( _this ) => {
-    audioPlay.pause();
-    _this.piopiy.answer();
-    _this.setState( { incoming: false } );
-    _this.setState( { dial: true } );
-
-}
-
-export const reject = ( _this ) => {
-    audioPlay.pause();
+export const reject = (_this) => {
     _this.piopiy.reject();
-    _this.setState( { incoming: false } );
 }
 
-export const hold = ( _this ) => {
-    _this.setState( { hold: false } )
+export const hold = (_this) => {
     _this.piopiy.hold();
 }
 
-export const unhold = ( _this ) => {
-    _this.setState( { hold: true } )
+export const unhold = (_this) => {
     _this.piopiy.unHold();
 }
 
-export const mute = ( _this ) => {
-    _this.setState( { mute: false } )
+export const mute = (_this) => {
     _this.piopiy.mute();
 }
 
-export const unmute = ( _this ) => {
-    _this.setState( { mute: true } )
+export const unmute = (_this) => {
     _this.piopiy.unMute();
 }
 
-
-
-export const stop = async ( _this ) => {
-
-
-    await global_this.piopiy.logout();
-}
